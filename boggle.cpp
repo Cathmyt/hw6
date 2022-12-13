@@ -98,46 +98,21 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 //dr = change in row
 //dont use dr and dc as your search, rather use them to set r and c as you recurse to the next position
 	
-	if(r >= board.size() || c>= board.size())
-	{
-		//checks if word is in dictionary
-		if (dict.find(word) != dict.end())
-		{
-			result.insert(word);
-			return true;
-		}
-		//word cannot be made/not real word
-		else{
-			return false;
-		}
+	if (r >= board.size() || c >= board.size()) return false;
+  else if (prefix.find(word) == prefix.end()) {
+    if (dict.find(word) != dict.end()) {
+      result.insert(word);
+      return true;
+    }
+		return false;
 	}
-	//if word is empty, call recrusive func
-	if (word.size() == 0)
-	{
-		return boggleHelper(dict, prefix, board, word + board[r][c], result, r + dr, c + dc, dr,dc);
-	}
-	//if it's a word but not a prefix for another word then do not recursive & insert word
-	if(dict.find(word) != dict.end() && prefix.find(word) == prefix.end())
-	{
-		result.insert(word);
-		return true;
-	}
-	//it is a prefix 
-	else if (prefix.find(word) != prefix.end())
-	{
-		//inserting character into word
-		//r + dr, c + dc change in row/column
-		bool storeResult = boggleHelper(dict, prefix, board, word + board[r][c], result, r + dr, c + dc, dr,dc);
-		//if we cannot make real word by inserting character 
-		//then just insert current word
-		if (storeResult == false && dict.find(word) != dict.end())
-		{
-			result.insert(word);
-			return true;
-		}
-		else if (storeResult == true) {
-			return true;
-		}
-	}
-	return false;
+  word += board[r][c];
+  bool valid = boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc);
+	if (valid == false) {
+    if (dict.find(word) != dict.end()) {
+      result.insert(word);
+      return true;
+    }
+  }
+  return valid;
 }

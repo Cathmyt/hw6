@@ -20,36 +20,46 @@ struct MyStringHash {
     HASH_INDEX_T operator()(const std::string& k) const
     {
         // Add your code here
-			std::string temp = k;
-			unsigned long long w[5] = {0, 0, 0, 0, 0};
+      std::string temp = k;
+      unsigned long long w[5] = {0, 0, 0, 0, 0};
 
-			for (int j = 0; j < 5; j++) {
-				int substringStart = std::max(0, int(temp.size() - (j + 1) * 6));
-				int substringEnd = temp.size() - j * 6;
-				std::string substring = temp.substr(substringStart, substringEnd - substringStart);
-				for (int i = 0; i < (int)substring.size(); i++) {
-					w[j] += pow(36, i) * letterDigitToNumber(substring[i]);
+    	for (int j = 4; j >= 0; j--) {
+				int size = temp.size();
+				for (int i = size-1; i >=0; i--) {
+					if (i < 6 && i < (int)temp.size()) {
+						int pos = temp[abs(i+1-temp.size())];
+						w[j] += letterDigitToNumber(pos) * pow(36,i);
+					}
+    		}
+				int k = 0;
+				while (k < 6 && temp.size() != 0) {
+					temp.pop_back();
+					k++;
 				}
 			}
 
-		 	HASH_INDEX_T result = 0;
-    	for (unsigned int i = 0; i < 5; i++) {
-				result += rValues[i] * w[i];
-    	}
-    	return result;
+      HASH_INDEX_T result = 0;
+      for (unsigned int i = 0; i < 5; i++) {
+				std::cout << w[i] << std::endl;
+        result += rValues[i] * w[i];
+      }
+      return result;
     }
 
     // A likely helper function is to convert a-z,0-9 to an integral value 0-35
     HASH_INDEX_T letterDigitToNumber(char letter) const
     {
-        // Add code here or delete this helper function if you do not want it
-			if (letter >= 'a' && letter <= 'z') {
-				return letter - 'a';  
-			}
-			else if (letter >= '0' && letter <= '9') {
-				return letter - '0' + 26;
-			}
-			else return -1;
+        // Add code here or delete this helper function if you do not want it 
+			if (letter >= 65 && letter <= 90 ) {
+				return letter - 65;
+      }
+      else if (letter >= 48 && letter <= 57 ) {
+				return letter - 22;
+    	}
+      else if (letter >= 97 &&letter <= 122 ) {
+        return letter - 97;
+      }
+      return -1;
     }
 
     // Code to generate the random R values
@@ -68,4 +78,3 @@ struct MyStringHash {
 };
 
 #endif
-
